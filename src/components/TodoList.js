@@ -1,37 +1,34 @@
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useContext } from "react";
 import TodoItem from "./TodoItem";
 import AddTodo from "./AddTodo";
+import { todoContext } from "../contexts/TodoContext";
+import { authContext } from "../contexts/AuthContext";
 
 const Navbar = () => {
-  const [todoState, setTodoState] = useState([
-    { id: uuidv4(), title: "Viec 1" },
-    { id: uuidv4(), title: "Viec 2" },
-    { id: uuidv4(), title: "Viec 3" },
-  ]);
+  //Load Todo Context
+  const { todoState } = useContext(todoContext);
 
-  //Add new title
-  const addEvent = (addForm) => {
-    setTodoState([...todoState, addForm]);
-  };
+  //Load Auth Context
+  const { authenticated } = useContext(authContext);
 
-  //Delete a title
-  const deleteEvent = (id) => {
-    setTodoState(todoState.filter((todo) => todo.id !== id));
-  };
+  let body;
 
-  return (
-    <div className="todo-list">
-      <AddTodo addEvent={addEvent} />
-      <ul>
-        {todoState.map((todo) => {
-          return (
-            <TodoItem key={todo.id} todo={todo} deleteEvent={deleteEvent} />
-          );
-        })}
-      </ul>
-    </div>
-  );
+  if (authenticated)
+    body = (
+      <>
+        <AddTodo />
+        <ul>
+          {todoState.map((todo) => {
+            return <TodoItem key={todo.id} todo={todo} />;
+          })}
+        </ul>
+      </>
+    );
+  else {
+    body = <p style={{ textAlign: "center" }}>Not Authorised</p>;
+  }
+
+  return <div className="todo-list">{body}</div>;
 };
 
 export default Navbar;
