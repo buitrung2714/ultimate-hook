@@ -1,36 +1,37 @@
-import React,{ useState,createContext } from "react";
-import { v4 as uuidv4 } from "uuid";
+import React, { useReducer, createContext, useEffect } from "react";
+import { todoReducer } from "../reducers/TodoReducer";
+import { GET_TODO, SAVE_TODO } from "../reducers/types";
 
 export const todoContext = createContext();
 
-const TodoContextProvider = ({children}) => {
+const TodoContextProvider = ({ children }) => {
+  //useReducer
+  const [todoState, dispatch] = useReducer(todoReducer, []);
 
-    //State
-    const [todoState, setTodoState] = useState([
-        { id: uuidv4(), title: "Viec 1" },
-        { id: uuidv4(), title: "Viec 2" },
-        { id: uuidv4(), title: "Viec 3" },
-      ]);
+  // useEffect
+  useEffect(() => {
+    dispatch({
+      type: GET_TODO,
+      payload: null,
+    });
+  }, []);
 
-    //Add new title
-    const addEvent = (addForm) => {
-        setTodoState([...todoState, addForm]);
-    };
+  useEffect(() => {
+    dispatch({
+      type: SAVE_TODO,
+      payload: { todoState },
+    });
+  }, [todoState]);
 
-    //Delete a title
-    const deleteEvent = (id) => {
-        setTodoState(todoState.filter((todo) => todo.id !== id));
-    };
+  //Context Data
+  const TodoContextData = { todoState, dispatch };
 
-    //Context Data
-    const TodoContextData = { todoState,addEvent,deleteEvent };
+  //Return
+  return (
+    <todoContext.Provider value={TodoContextData}>
+      {children}
+    </todoContext.Provider>
+  );
+};
 
-    //Return
-    return (
-        <todoContext.Provider value={TodoContextData}>
-            {children}
-        </todoContext.Provider>
-    )
-}
-
-export default TodoContextProvider
+export default TodoContextProvider;

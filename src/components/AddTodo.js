@@ -2,9 +2,10 @@ import { v4 as uuidv4 } from "uuid";
 import { useState, useContext } from "react";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { todoContext } from "../contexts/TodoContext";
+import { ADD_TODO } from "../reducers/types";
 
 const AddTodo = () => {
-  const { addEvent } = useContext(todoContext);
+  const { dispatch } = useContext(todoContext);
   const { theme } = useContext(ThemeContext);
   const { isLightBg, light, dark } = theme;
   const style = isLightBg ? light : dark;
@@ -18,9 +19,9 @@ const AddTodo = () => {
 
   const addForm = (event) => {
     event.preventDefault();
-    addEvent({
-      id: uuidv4(),
-      title,
+    dispatch({
+      type: ADD_TODO,
+      payload: { todo: { id: uuidv4(), title } },
     });
     setTitle("");
   };

@@ -1,6 +1,7 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { authContext } from "../contexts/AuthContext";
+import { TOGGLE_LOG } from "../reducers/types";
 
 const Navbar = () => {
   //Load Context Theme
@@ -9,7 +10,24 @@ const Navbar = () => {
   const style = isLightBg ? light : dark;
 
   //Load Context Auth
-  const { authenticated, toggleLog } = useContext(authContext);
+  const { authenticated, dispatch } = useContext(authContext);
+
+  //Dynamic Log
+  const toggleLog = () => {
+    dispatch({
+      type: TOGGLE_LOG,
+      payload: authenticated,
+    });
+  };
+
+  //useEffect
+  useEffect(() => {
+    alert(
+      authenticated
+        ? "Login Successfully"
+        : "You are logout. Please login to see the todos"
+    );
+  }, [authenticated]);
 
   return (
     <div className="navbar" style={style}>
